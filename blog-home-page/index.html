@@ -1,0 +1,192 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>blog-home-page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: table;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background: black;
+            background: linear-gradient(to bottom, black 0%, #317ef3 100%);
+        }
+
+        .filter {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #dd5246;
+            animation: colorChange 25s ease-in-out infinite;
+            animation-fill-mode: both;
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes colorChange {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: .6;
+            }
+        }
+
+        .landscape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('land.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            background-size: 1000px 250px;
+        }
+
+        .main {
+            position: relative;
+            z-index: 1000;
+            display: table-cell;
+            vertical-align: middle;
+            color: wheat;
+            letter-spacing: 5px;
+        }
+
+        .main-box {
+            margin: 0 auto;
+            text-align: center;
+            width: 400px;
+            height: 250px;
+        }
+
+        p {
+            line-height: 30px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hr-line {
+            margin: 20px auto;
+            width: 50%;
+
+        }
+
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="landscape"></div>
+    <div class="filter"></div>
+    <canvas class="meteor-shower" id="canvas" width="1600" height="900"></canvas>
+    <div class="main">
+        <div class="main-box">
+            <h2>秋聪的个人博客</h2>
+            <hr class="hr-line">
+            <p>博客主页</p>
+            <p>所有文章</p>
+            <p>标签</p>
+            <p>关于我</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取画布
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+
+
+        class Meteor {
+            constructor() {
+                this.x = Math.ceil(Math.random() * 1600 + 200);
+                this.y = Math.ceil(Math.random() * 200);
+                this.width = 2;
+                this.speed = Math.ceil(Math.random()*9)+3;;
+                this.angle = Math.ceil(Math.random()*15)+25;
+                this.length = Math.ceil(Math.random() * 100 + 50);
+                this.headColor = "white";
+
+                let r = Math.random() * 255;
+                let g = Math.random() * 255;
+                let b = Math.random() * 255;
+
+                this.tailColor = "rgb(" + r.toString() + "," + g.toString() + "," + b.toString() + ")";
+            }
+            // 更新坐标
+            updatePos() {
+                this.x = this.x - this.speed * Math.cos(this.angle * Math.PI / 180);
+                this.y = this.y + this.speed * Math.sin(this.angle * Math.PI / 180);
+            }
+
+            // 绘制流星
+            drawMeteor() {
+
+               
+
+                let w = this.speed * Math.cos(this.angle * Math.PI / 180);
+                let h = this.speed * Math.sin(this.angle * Math.PI * 180);
+                let endX = this.x + this.length * Math.cos(this.angle * Math.PI / 180)
+                let endY = this.y - this.length * Math.sin(this.angle * Math.PI / 180)
+
+                ctx.clearRect(endX - 5, endY - 5, endX + 2 * w, endY - 2 * h);
+                if (this.x < -150 || this.y > 1050) {
+                    this.x = Math.ceil(Math.random() * 1400 + 200);
+                    this.y = Math.ceil(Math.random() * 200);
+                }
+                this.updatePos();
+                endX = this.x + this.length * Math.cos(this.angle * Math.PI / 180)
+                endY = this.y - this.length * Math.sin(this.angle * Math.PI / 180)
+                ctx.save();
+                ctx.beginPath();
+                ctx.lineWidth = this.width;
+                let line = ctx.createLinearGradient(this.x, this.y, endX, endY);
+                line.addColorStop(0, this.headColor);
+                line.addColorStop(.2, this.tailColor);
+                line.addColorStop(1, "black");
+                ctx.strokeStyle = line;
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(endX, endY);
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        let meteor1 = new Meteor();
+        let meteor2 = new Meteor();
+        let meteor3 = new Meteor();
+        // meteor.drawMeteor();
+        setInterval(function () {
+            meteor1.drawMeteor();
+            meteor2.drawMeteor();
+            meteor3.drawMeteor();
+        }, 33);
+    </script>
+
+</body>
+
+</html>
